@@ -9,8 +9,8 @@
 import tkinter as tk
 from tkinter import messagebox
 from instagrapi import Client
-from instagrapi.exceptions import TwoFactorRequired, LoginRequired, ClientJSONDecodeError, ChallengeRequired
-import json, os, sys
+from instagrapi.exceptions import LoginRequired, ChallengeRequired
+import json, os
 from Crypto.Cipher import AES
 #from Crypto.Util.Padding import pad, unpad
 # To see your ip "https://api.ipify.org/"
@@ -41,8 +41,6 @@ def decrypt_AES256(ciphertext: bytes) -> str:
 
 def print_er(error: str):
     messagebox.showerror("Error", error)
-    root.destroy()
-    sys.exit()
     
 def load_settings():
     try:
@@ -92,13 +90,12 @@ def store_user(user, passw):
     except:
         print("Error saving login data.")
 
-def login(user, passw) -> Client:
+def load_session():
+    global cl
     settings = load_settings()
-    used_input = False
-    session = False
-    cl = Client()
+    user, passw = load_user()
     cl.delay_range = [1, 3]
-    if settings:
+    if settings and user and passw:
         try:
             cl.set_settings(settings)
             cl.login(user, passw)
@@ -110,44 +107,21 @@ def login(user, passw) -> Client:
                 cl.set_uuids(old_session["uuids"])
                 try:
                     cl.login(user, passw)
-                    session = True
-                except TwoFactorRequired:
-                    auth_code = input("Enter your 2FA authentication code: ") ###############
-                    try:
-                        cl.login(user, passw, verification_code=auth_code)
-                        session = True
-                    except:
-                        print_er("Wrong auth, missing internet connection or too much attempts.")
                 except:
-                    pass
-            session = True
-        except ClientJSONDecodeError:
-            pass
+                    cl = None
         except:
-            pass
-    if not session:
-        try:
-            cl.login(user, passw)
-        except TwoFactorRequired:
-            auth_code = input("Enter your 2FA authentication code: ")#############
-            try:
-                cl.login(user, passw, verification_code=auth_code)
-            except:
-                print_er("Wrong auth, missing internet connection or too much attempts.")
-        except:
-            print_er("Wrong credentials, missing internet connection or too much attempts.")
-        store_settings(cl.get_settings())
-        store_user(user, passw)
-    return cl
+            cl = None
 
-def get_followers_usernames(cl, amount: int = 0) -> list[str]:
+def get_followers_usernames(amount: int = 0) -> list[str]:
+    global cl
     try:
         followers = cl.user_followers(cl.user_id, amount=amount)
     except ChallengeRequired:
         print_er("Error: ChallengeRequired. Solve the captcha in your account.")
     return [user.username for user in followers.values()]
 
-def get_following_usernames(cl, amount: int = 0) -> list[str]:
+def get_following_usernames(amount: int = 0) -> list[str]:
+    global cl
     try:
         following = cl.user_following(cl.user_id, amount=amount)
     except ChallengeRequired:
@@ -164,7 +138,8 @@ def print_bad_friends(followers: list[str], following: list[str]) -> list[str]:
     result_text.insert("end", f"\nTotal people who don't follow you back: {counter}\n")
     return bad_friends
 
-def auto_unfollow(bad_friends: list[str], cl: Client):
+def auto_unfollow(bad_friends: list[str]):
+    global cl
     opt = unfollow_option.get()
     if opt == "0":
         return None
@@ -182,18 +157,15 @@ def auto_unfollow(bad_friends: list[str], cl: Client):
     return None
 
 def start_check():
-    user = username_entry.get()
-    passw = password_entry.get()
-    cl = login(user, passw)
+    global cl
     result_text.insert("end", "Who doesn't follow you back on Instagram? Downloading content. "
                              "Please wait.\nIt may take a few seconds/minutes depending on the total amount of followers and following.\n")
-    followers_username = get_followers_usernames(cl)
-    following_username = get_following_usernames(cl)
+    followers_username = get_followers_usernames()
+    following_username = get_following_usernames()
     bad_friends = print_bad_friends(followers_username, following_username)
-    auto_unfollow(bad_friends, cl)
+    auto_unfollow(bad_friends)
     result_text.insert("end", "\nThis window will remain open for five minutes to give you time to check the results. You can also close it now.")
     root.after(300000, root.quit)
-    root.update()
 
 def print_instructions():
     instructions = """
@@ -209,39 +181,76 @@ def print_instructions():
     label = tk.Label(new_window, text=instructions)
     label.pack()
 
-def start_gui():
-    global root, result_text, username_entry, password_entry, unfollow_option
+def main_window():
+    for widget in root.winfo_children():
+        widget.destroy()
+        
+    #main_window = tk.Toplevel(root)
+    global result_text, unfollow_option
+
+    result_text = tk.Text(root, width=80, height=20)
+    result_text.grid(row=0, column=0, columnspan=3)
+
+    tk.Label(root, text="Unfollow Option:").grid(row=1, column=0)
+    unfollow_option = tk.StringVar()
+    unfollow_option.set("0")
+    tk.Radiobutton(root, text="No Unfollow", variable=unfollow_option, value="0").grid(row=1, column=1)
+    tk.Radiobutton(root, text="Unfollow All", variable=unfollow_option, value="unfollowall").grid(row=2, column=1)
+
+    start_check()
+    
+def handle_login():
+    user = username_entry.get()
+    passw = password_entry.get()
+    auth_code = twofa_entry.get()
+    global cl
+    if user and passw:
+        try:
+            cl.login(user, passw, verification_code=auth_code)
+            cl.login(user, passw, verification_code=auth_code)
+            store_settings(cl.get_settings())
+            store_user(user, passw)
+            main_window()
+        except:
+            print_er("Wrong credentials, missing internet connection or too much attempts.")
+    else:
+        print_er("Missing username or/and password.")
+
+def login_window():
+    global cl, root, username_entry, password_entry, twofa_entry
 
     root = tk.Tk()
     root.title("InstaFollowBack by Mqtth3w")
     root.resizable(False, False)
     
-    tk.Label(root, text="Instagram Username:").grid(row=0, column=0)
-    username_entry = tk.Entry(root, width=50)
-    username_entry.grid(row=0, column=1)
+    load_session()
+    if cl:
+        root.mainloop()
+        open_main_window()
+    else:    
+        tk.Label(root, text="Instagram Username:").grid(row=0, column=0)
+        username_entry = tk.Entry(root, width=50)
+        username_entry.grid(row=0, column=1)
 
-    tk.Label(root, text="Instagram Password:").grid(row=1, column=0)
-    password_entry = tk.Entry(root, width=50, show="*")
-    password_entry.grid(row=1, column=1)
+        tk.Label(root, text="Instagram Password:").grid(row=1, column=0)
+        password_entry = tk.Entry(root, width=50, show="*")
+        password_entry.grid(row=1, column=1)
 
-    tk.Button(root, text="Check", command=start_check).grid(row=2, column=1)
+        tk.Label(root, text="2FA Code:").grid(row=2, column=0)
+        twofa_entry = tk.Entry(root, width=50)
+        twofa_entry.grid(row=2, column=1)
 
-    result_text = tk.Text(root, width=80, height=20)
-    result_text.grid(row=3, column=0, columnspan=3)
+        tk.Button(root, text="Login", command=handle_login).grid(row=3, column=1)
+        
+        print_instructions()
 
-    tk.Label(root, text="Unfollow Option:").grid(row=4, column=0)
-    unfollow_option = tk.StringVar()
-    unfollow_option.set("0")
-    tk.Radiobutton(root, text="No Unfollow", variable=unfollow_option, value="0").grid(row=4, column=1)
-    tk.Radiobutton(root, text="Unfollow All", variable=unfollow_option, value="unfollowall").grid(row=5, column=1)
-    
-    print_instructions()
-    
-    root.mainloop()
+        root.mainloop()
 
 # Start here
-if __name__ == "__main__":
-    if not os.path.exists("./data"):
-        os.makedirs("./data")
-    start_gui()
+if not os.path.exists("./data"):
+    os.makedirs("./data")
+cl = Client()
+login_window()
+
+        
 
