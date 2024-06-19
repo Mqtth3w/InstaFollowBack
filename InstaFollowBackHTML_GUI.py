@@ -5,7 +5,7 @@
     through HTML parsing of your data dump already downloaded from Instagram.
 '''
 
-from tkinter import Tk, Label, Button, Entry, Text, filedialog, messagebox
+import tkinter as tk
 from bs4 import BeautifulSoup
 
 #print("InstaFollowBack")
@@ -15,12 +15,6 @@ def cleanup(txt: str) -> list[str]:
     soup = BeautifulSoup(txt, 'html.parser')
     link_texts = [tag.text for tag in soup.find_all('a')]
     return link_texts
-
-def print_er(error: str):
-    result_text.insert("end", error + "\n")
-    result_text.insert("end", "Exiting in 5 seconds...\n")
-    result_text.update()
-    root.after(5000, root.quit)
 
 def main(following_path, followers_path):
     try:
@@ -66,32 +60,36 @@ def print_instructions():
     2. Choose Download or Transfer Your Information. Then, select some of your information.
     3. Select only Followers and Following (under Connections). Afterwards, choose Download to Device (HTML format).
     4. You will receive a link in your registered email to download your data.
-    5. After downloading the data, extract the .zip folder and locate the paths to following.html and followers.html.
+    5. After downloading the data, extract the .zip folder and locate (through the "Browse" option) the paths to following.html and followers.html.
        (File names may include underscores or numbers)
        Examples:
        C:/Users/MATTEO/Downloads/mqtth3vv-2024-03-16-html/connections/followers_and_following/following.html
        C:/Users/MATTEO/Downloads/mqtth3vv-2024-03-16-html/connections/followers_and_following/followers_1.html
     """
-    messagebox.showinfo("Instructions", instructions)
+    new_window = tk.Toplevel(root)
+    new_window.title("Info")
+    label = tk.Label(new_window, text=instructions)
+    label.pack()
 
 def start_gui():
     global root, result_text
-    root = Tk()
-    root.title("Instagram Follow Checker")
-
-    Label(root, text="Path to following file:").grid(row=0, column=0)
-    following_entry = Entry(root, width=50)
+    root = tk.Tk()
+    root.title("InstaFollowBackHTML by Mqtth3w")
+    root.resizable(False, False)
+    
+    tk.Label(root, text="Path to following file:").grid(row=0, column=0)
+    following_entry = tk.Entry(root, width=50)
     following_entry.grid(row=0, column=1)
-    Button(root, text="Browse", command=lambda: select_file(following_entry)).grid(row=0, column=2)
+    tk.Button(root, text="Browse", command=lambda: select_file(following_entry)).grid(row=0, column=2)
 
-    Label(root, text="Path to followers file:").grid(row=1, column=0)
-    followers_entry = Entry(root, width=50)
+    tk.Label(root, text="Path to followers file:").grid(row=1, column=0)
+    followers_entry = tk.Entry(root, width=50)
     followers_entry.grid(row=1, column=1)
-    Button(root, text="Browse", command=lambda: select_file(followers_entry)).grid(row=1, column=2)
+    tk.Button(root, text="Browse", command=lambda: select_file(followers_entry)).grid(row=1, column=2)
 
-    Button(root, text="Check", command=lambda: main(following_entry.get(), followers_entry.get())).grid(row=2, column=1)
+    tk.Button(root, text="Check", command=lambda: main(following_entry.get(), followers_entry.get())).grid(row=2, column=1)
 
-    result_text = Text(root, width=80, height=20)
+    result_text = tk.Text(root, width=80, height=20)
     result_text.grid(row=3, column=0, columnspan=3)
 
     print_instructions()

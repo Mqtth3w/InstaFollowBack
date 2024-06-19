@@ -7,11 +7,10 @@
 '''
 
 import tkinter as tk
-from tkinter import filedialog, messagebox
+from tkinter import messagebox
 from instagrapi import Client
 from instagrapi.exceptions import TwoFactorRequired, LoginRequired, ClientJSONDecodeError, ChallengeRequired
-import json
-import os
+import json, os, sys
 from Crypto.Cipher import AES
 #from Crypto.Util.Padding import pad, unpad
 # To see your ip "https://api.ipify.org/"
@@ -20,8 +19,8 @@ from Crypto.Cipher import AES
 
 # Change this password!!!
 KEY_32 = b"mqtt1507IlRe2000h3vvGianve23nuti"
-# Is better to use the input so don't save the password in this program!!!
-# KEY_32 = input("Password?").encode("utf-8")
+# Is better to use the input so don't save the password in this script!!!
+#KEY_32 = input("Password?").encode("utf-8")
 
 def pad(data: bytes, blockSize: int) -> bytes:
     padLen = blockSize - (len(data) % blockSize)
@@ -41,9 +40,10 @@ def decrypt_AES256(ciphertext: bytes) -> str:
     return unpad(plaintext, 16).decode()
 
 def print_er(error: str):
-    messagebox.showerror("Error (quitting in five seconds..)", error)
-    root.after(5000, root.quit)
-
+    messagebox.showerror("Error", error)
+    root.destroy()
+    sys.exit()
+    
 def load_settings():
     try:
         with open("./data/alpha.txt", "rb") as f:
@@ -57,7 +57,7 @@ def load_settings():
     except FileNotFoundError:
         pass
     except:
-        print("Error loading session data.")
+        print_er("Error loading session data.")
     return {}
 
 def store_settings(settings):
@@ -66,7 +66,7 @@ def store_settings(settings):
         with open("./data/alpha.txt", "wb") as f:
             f.write(ciphertext)
     except:
-        print("Error saving session data.")
+        print_er("Error saving session data.")
 
 def load_user() -> tuple[str, str]:
     try:
@@ -112,7 +112,7 @@ def login(user, passw) -> Client:
                     cl.login(user, passw)
                     session = True
                 except TwoFactorRequired:
-                    auth_code = input("Enter your 2FA authentication code: ")
+                    auth_code = input("Enter your 2FA authentication code: ") ###############
                     try:
                         cl.login(user, passw, verification_code=auth_code)
                         session = True
@@ -129,7 +129,7 @@ def login(user, passw) -> Client:
         try:
             cl.login(user, passw)
         except TwoFactorRequired:
-            auth_code = input("Enter your 2FA authentication code: ")
+            auth_code = input("Enter your 2FA authentication code: ")#############
             try:
                 cl.login(user, passw, verification_code=auth_code)
             except:
@@ -193,13 +193,29 @@ def start_check():
     auto_unfollow(bad_friends, cl)
     result_text.insert("end", "\nThis window will remain open for five minutes to give you time to check the results. You can also close it now.")
     root.after(300000, root.quit)
+    root.update()
+
+def print_instructions():
+    instructions = """
+    Instructions for using the software:
+    1. Insert username and password (then click check) to login.
+    2. Wait some time for Instagram login and content download (following&followers).
+    3. .
+    4. .
+    5. .
+    """
+    new_window = tk.Toplevel(root)
+    new_window.title("Info")
+    label = tk.Label(new_window, text=instructions)
+    label.pack()
 
 def start_gui():
     global root, result_text, username_entry, password_entry, unfollow_option
 
     root = tk.Tk()
-    root.title("Instagram Follow Checker")
-
+    root.title("InstaFollowBack by Mqtth3w")
+    root.resizable(False, False)
+    
     tk.Label(root, text="Instagram Username:").grid(row=0, column=0)
     username_entry = tk.Entry(root, width=50)
     username_entry.grid(row=0, column=1)
@@ -218,7 +234,9 @@ def start_gui():
     unfollow_option.set("0")
     tk.Radiobutton(root, text="No Unfollow", variable=unfollow_option, value="0").grid(row=4, column=1)
     tk.Radiobutton(root, text="Unfollow All", variable=unfollow_option, value="unfollowall").grid(row=5, column=1)
-
+    
+    print_instructions()
+    
     root.mainloop()
 
 # Start here
