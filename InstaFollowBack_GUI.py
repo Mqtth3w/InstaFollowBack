@@ -90,11 +90,11 @@ def store_user(user, passw):
     except:
         print("Error saving login data.")
 
-def load_session():
-    global cl
+def load_session() -> Client:
+    cl = Client()
+    cl.delay_range = [1, 3]
     settings = load_settings()
     user, passw = load_user()
-    cl.delay_range = [1, 3]
     if settings and user and passw:
         try:
             cl.set_settings(settings)
@@ -111,6 +111,9 @@ def load_session():
                     cl = None
         except:
             cl = None
+    else:
+        cl = None
+    return cl
 
 def get_followers_usernames(amount: int = 0) -> list[str]:
     global cl
@@ -170,10 +173,10 @@ def start_check():
 def print_instructions():
     instructions = """
     Instructions for using the software:
-    1. Insert username and password (then click check) to login.
+    1. Insert username and password (and 2FA if enabled) to login.
     2. Wait some time for Instagram login and content download (following&followers).
-    3. .
-    4. .
+    3. After you will see who doesn't follow you back.
+    4. Optionally you can unfollow them.
     5. .
     """
     new_window = tk.Toplevel(root)
@@ -182,11 +185,15 @@ def print_instructions():
     label.pack()
 
 def main_window():
+    global root, result_text, unfollow_option
+    
+    if not logged:
+        root = tk.Tk()
+        root.title("InstaFollowBack by Mqtth3w")
+        root.resizable(False, False)
+    
     for widget in root.winfo_children():
         widget.destroy()
-        
-    #main_window = tk.Toplevel(root)
-    global result_text, unfollow_option
 
     result_text = tk.Text(root, width=80, height=20)
     result_text.grid(row=0, column=0, columnspan=3)
@@ -199,17 +206,20 @@ def main_window():
 
     start_check()
     
+    if not logged:
+        root.mainloop()
+    
 def handle_login():
     user = username_entry.get()
     passw = password_entry.get()
     auth_code = twofa_entry.get()
-    global cl
     if user and passw:
         try:
-            cl.login(user, passw, verification_code=auth_code)
+            global cl, logged
             cl.login(user, passw, verification_code=auth_code)
             store_settings(cl.get_settings())
             store_user(user, passw)
+            logged = True
             main_window()
         except:
             print_er("Wrong credentials, missing internet connection or too much attempts.")
@@ -219,38 +229,40 @@ def handle_login():
 def login_window():
     global cl, root, username_entry, password_entry, twofa_entry
 
+    cl = Client()
+    cl.delay_range = [1, 3]
+    
     root = tk.Tk()
     root.title("InstaFollowBack by Mqtth3w")
     root.resizable(False, False)
+       
+    tk.Label(root, text="Instagram Username:").grid(row=0, column=0)
+    username_entry = tk.Entry(root, width=50)
+    username_entry.grid(row=0, column=1)
+
+    tk.Label(root, text="Instagram Password:").grid(row=1, column=0)
+    password_entry = tk.Entry(root, width=50, show="*")
+    password_entry.grid(row=1, column=1)
+
+    tk.Label(root, text="2FA Code:").grid(row=2, column=0)
+    twofa_entry = tk.Entry(root, width=50)
+    twofa_entry.grid(row=2, column=1)
+
+    tk.Button(root, text="Login", command=handle_login).grid(row=3, column=1)
     
-    load_session()
-    if cl:
-        root.mainloop()
-        open_main_window()
-    else:    
-        tk.Label(root, text="Instagram Username:").grid(row=0, column=0)
-        username_entry = tk.Entry(root, width=50)
-        username_entry.grid(row=0, column=1)
+    print_instructions()
 
-        tk.Label(root, text="Instagram Password:").grid(row=1, column=0)
-        password_entry = tk.Entry(root, width=50, show="*")
-        password_entry.grid(row=1, column=1)
-
-        tk.Label(root, text="2FA Code:").grid(row=2, column=0)
-        twofa_entry = tk.Entry(root, width=50)
-        twofa_entry.grid(row=2, column=1)
-
-        tk.Button(root, text="Login", command=handle_login).grid(row=3, column=1)
-        
-        print_instructions()
-
-        root.mainloop()
+    root.mainloop()
 
 # Start here
 if not os.path.exists("./data"):
     os.makedirs("./data")
-cl = Client()
-login_window()
+logged = False
+cl = load_session()
+if cl:
+    main_window()
+else:
+    login_window()
 
-        
+
 
