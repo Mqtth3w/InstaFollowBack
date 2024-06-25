@@ -5,6 +5,9 @@ Discover who doesn't follow you back on Instagram and optionally auto-unfollow t
 ## InstaFollowBackHTML_GUI
 It works offline with manually downloaded data. No Instagram login required.
 
+### Requirements
+BeautifulSoup, tkinter.
+
 ### Usage
  1. On your Instagram account, navigate to Settings, then go to Your Activity and select Download Your Data.
  2. Choose Download or Transfer Your Information. Then, select some of your information.
@@ -18,6 +21,9 @@ Automatically logs in (if you already logged) to Instagram and downloads data to
 All data is saved offline on your computer, encrypted with 256-bit AES, ensuring their safety. It's necessary to save the session so that you won't have to log in with your credentials every time, similar to the Instagram app. If you log in many times with your credentials, Instagram will think you are a bot. You should look at the code and change the encryption password. 
 If you use InstaFollowBack several times a day, Instagram may suspect you are a bot and will ask you to solve a captcha. Simply solve it. It's safe. I have used it more than 20 times a day during testing (for the no GUI version), but it's always better not to abuse this feature. It's a good idea to consistently use the same IP address (for at least eight hours). Alternatively, you can use InstaFollowBackHTML anytime you want because it works offline.
 
+### Requirements
+instagrapi, pillow, tkinter.
+
 ### Usage
  0. If the session is already saved wait for login.
  1. Insert username and password (and 2FA if enabled) to login.
@@ -26,4 +32,4 @@ If you use InstaFollowBack several times a day, Instagram may suspect you are a 
  4. Optionally you can unfollow them.
 
 ## old
-This folder contain an equal version but without the GUI.
+This folder contain an equal version but without the GUI. So doesn't require tkinter.
