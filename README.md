@@ -15,7 +15,7 @@ bs4, tkinter.
  4. You will receive a link in your registered email to download your data.
  5. After downloading the data, extract the .zip folder and locate (through the "Browse" option) the paths to following.html and followers.html.
 
-## InstaFollowBac_GUI
+## InstaFollowBack_GUI
 (this version is not yet completed, I have to test)
 Automatically logs in (if you already logged) to Instagram and downloads data to check who doesn't follow you back. It also allows you to automatically unfollow those individuals.
 All data is saved offline on your computer, encrypted with 256-bit AES, ensuring their safety. It's necessary to save the session so that you won't have to log in with your credentials every time, similar to the Instagram app. If you log in many times with your credentials, Instagram will think you are a bot. You should look at the code and change the encryption password. 
