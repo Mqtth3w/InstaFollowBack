@@ -22,7 +22,7 @@ All data is saved offline on your computer, encrypted with 256-bit AES, ensuring
 If you use InstaFollowBack several times a day, Instagram may suspect you are a bot and will ask you to solve a captcha. Simply solve it. It's safe. I have used it more than 20 times a day during testing (for the no GUI version), but it's always better not to abuse this feature. It's a good idea to consistently use the same IP address (for at least eight hours). Alternatively, you can use InstaFollowBackHTML anytime you want because it works offline.
 
 ### Requirements
-instagrapi, pillow, tkinter.
+instagrapi, pillow, pycryptodome, tkinter.
 
 ### Usage
  0. If the session is already saved wait for login.
