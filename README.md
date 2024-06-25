@@ -26,4 +26,4 @@ If you use InstaFollowBack several times a day, Instagram may suspect you are a 
  4. Optionally you can unfollow them.
 
 ## old
-This folder contain a equal version but without the GUI.
+This folder contain an equal version but without the GUI.
