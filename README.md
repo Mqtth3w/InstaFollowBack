@@ -6,7 +6,7 @@ Discover who doesn't follow you back on Instagram and optionally auto-unfollow t
 It works offline with manually downloaded data. No Instagram login required.
 
 ### Requirements
-BeautifulSoup, tkinter.
+bs4, tkinter.
 
 ### Usage
  1. On your Instagram account, navigate to Settings, then go to Your Activity and select Download Your Data.
