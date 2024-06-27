@@ -40,6 +40,6 @@ This folder contain an equal version but without the GUI. So doesn't require tki
 pyinstaller.
 
 ### Command
-'''bash
+```bash
 pyinstaller --onefile --icon=Instagram_icon_2022.svg.png --name InstaFollowBackHTML_GUI InstaFollowBackHTML_GUI.py
-'''
+```
