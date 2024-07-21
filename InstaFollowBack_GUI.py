@@ -1,6 +1,6 @@
 '''
     @author Matteo Gianvenuti https://github.com/mqtth3w
-    @license MIT License
+    @license GPL-3.0
     This software allow you to connect to instagram with login (2FA supported)
     and automatically download following and followers to know who doesen't follow you back.
     Optionally you can automatically unfollow them.
