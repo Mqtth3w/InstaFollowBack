@@ -1,6 +1,6 @@
 '''
     @author Matteo Gianvenuti https://github.com/mqtth3w
-    @license MIT License
+    @license GPL-3.0
     This software allow you to find who doesen't follow you back on Instagram
     through HTML parsing of your data dump already downloaded from Instagram.
 '''
