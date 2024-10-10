@@ -12,8 +12,9 @@ bs4, tkinter.
  1. On your Instagram account, navigate to Settings, then go to Your Activity and select Download Your Data.
  2. Choose Download or Transfer Your Information. Then, select some of your information.
  3. Select only Followers and Following (under Connections). Afterwards, choose Download to Device (HTML format).
- 4. You will receive a link in your registered email to download your data.
- 5. After downloading the data, extract the .zip folder and locate (through the "Browse" option) the paths to following.html and followers.html.
+ 4. **Important!** Set the time period to all time.
+ 5. You will receive a link in your registered email to download your data.
+ 6. After downloading the data, extract the .zip folder and locate (through the "Browse" option) the paths to following.html and followers.html.
 
 ## InstaFollowBack_GUI
 (this version is not yet completed, I have to test)
