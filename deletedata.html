@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>whodoesntfollowbackyou</title>
+		<link rel="stylesheet" href="./style.css" type="text/css"/>
+		<script src="./script.js"></script>
+	</head>
+	<body>
+		<div id="centerdiv" align=center>
+			<br><br><br>
+			<div>
+				<h3>How to delete your data?</h3>
+			</div>
+			<br>
+			<div style="background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); max-width: 600px; margin: 0 auto;">
+				<p>We don't save any type of data. All data is saved locally in your browser, 
+				so to delete all "saved data" simply clear the cache and close the browser.</p>
+			</div>
+			<br>
+			<div class="button-container">
+				<button onclick="window.location.href='./index.html';">Home</button> 
+			</div>
+			<br>
+			<script>
+				fetch('./footer.html')
+					.then(response => response.text())
+					.then(text => {
+						document.getElementById('centerdiv').innerHTML += text;
+					});
+			</script>
+		</div>
+	</body>
+</html>

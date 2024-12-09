@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>whodoesntfollowbackyou</title>
+		<link rel="stylesheet" href="./style.css" type="text/css"/>
+		<script src="./script.js"></script>
+	</head>
+    <body id="page-top" ><!-- Navigationbody onload="setup()"> -->
+        <div id="centerdiv" align=center>
+			<br><br><br><br><br><br><br><br><br><br><br><br>
+			<div>
+				<h1>Who doesn't follow you back on instagram?</h1>
+			</div>
+			<br> 
+			<div class="button-container">
+				<button onclick="window.location.href='./instafollowback.html';">Go ahead!</button>
+			</div>
+			<br>
+			<!-- Footer from footer.html -->
+			<script>
+				fetch('./footer.html')
+					.then(response => response.text())
+					.then(text => {
+						document.getElementById('centerdiv').innerHTML += text;
+					});
+			</script>
+		</div>
+    </body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>whodoesntfollowbackyou</title>
+		<link rel="stylesheet" href="./style.css" type="text/css"/>
+		<script src="./script.js"></script>
+	</head>
+	<body>
+		<div id="centerdiv" align=center>
+			<div>
+				<h1>Who doesn't follow back you on instagram?</h1>
+			</div>
+			<br>
+			<div style="background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); max-width: 600px; margin: 0 auto;">
+				<h3>Instructions</h3>
+				<ol style="text-align: left;">
+					<li>On your Instagram account, navigate to Settings, then go to Your Activity and select Download Your Data.</li>
+					<li>Choose Download or Transfer Your Information. Then, select some of your information.</li>
+					<li>Select only Followers and Following (under Connections). Afterwards, choose Download to Device. (MAKE SURE TO SELECT "All time" AS PERIOD).</li>
+					<li>You will receive a link in your registered email to download your data.</li>
+					<li>I recommend continuing on a PC. After the download, extract the .zip folder.</li>
+					<li>Open the folder and navigate to the directory \connections\followers_and_following.</li>
+					<li>Open following.html with any text editor, then press Ctrl + A to select all and Ctrl + C to copy all.</li>
+					<li>Next, go to select the form input Following HTML and press Ctrl + V to paste all.</li>
+					<li>Repeat the same steps for followers.html (file names may include underscores or numbers).</li>
+					<li>Click Compare and scroll down to see the results.</li>
+					<li>That's it! Have fun!</li>
+				</ol>
+			</div>
+
+			<br> 
+			<form id="followingForm" method="post">
+				<label for="followingInput">Following HTML:</label><br>
+				<textarea id="followingInput" name="followingInput" rows="10" cols="50"></textarea><br>
+				<label for="followersInput">Followers HTML:</label><br>
+				<textarea id="followersInput" name="followersInput" rows="10" cols="50"></textarea><br><br>
+				<input type="submit" value="Compare!" onclick="processFormData()">
+				<input type="button" value="Home" onclick="window.location.href='./index.html';">
+			</form>
+			<br>
+			<div style="background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); max-width: 600px; margin: 0 auto;">
+				<h3 id="result">Results:</h3>
+				<p id="resultParagraph"></p>
+			</div>
+			<br><br><br>
+			<br><br><br>
+			<!-- Footer with footer.html -->
+			<script>
+				fetch('./footer.html')
+					.then(response => response.text())
+					.then(text => {
+						document.getElementById('centerdiv').innerHTML += text;
+					});
+			</script>
+			
+		</div>
+	</body>
+</html>
