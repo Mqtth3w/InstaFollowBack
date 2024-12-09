@@ -3,7 +3,7 @@
 Discover who doesn't follow you back on Instagram and optionally auto-unfollow them.
 
 ## InstaFollowBackHTML_GUI
-It works offline with manually downloaded data (the download require just 5min). No Instagram login required. I personally prefer this version.
+It works offline with manually downloaded data (the download require just 5min). No Instagram login required. I personally prefer this version. You can use this program online [here](https://mqtth3w.github.io/InstaFollowBack).
 
 ### Requirements
 bs4, tkinter.
